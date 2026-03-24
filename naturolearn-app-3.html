@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="NaturoLearn">
+<meta name="theme-color" content="#ffffff">
+<title>NaturoLearn</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{height:-webkit-fill-available;height:100dvh}
+body{background:#f5f5f0;color:#1a1a1a;font-family:'DM Sans',sans-serif;min-height:100dvh;-webkit-text-size-adjust:100%;overscroll-behavior:none}
+:root{
+  --g:#2d7a3f;--g-bg:#e8f5eb;--g-l:#c8e6c9;
+  --r:#c0392b;--r-bg:#fdecea;--r-l:#f5c0bc;
+  --b:#1a56db;--b-bg:#e8f0fe;
+  --o:#92400e;--o-bg:#fef3e2;--o-l:#fde68a;
+  --bd:#e8e8e4;--bd2:#f0f0ec;--surf:#fff;--mut:#888;
+  --mono:'DM Mono',monospace
+}
+#app{display:flex;flex-direction:column;height:100dvh;height:-webkit-fill-available}
+.hdr{background:#fff;border-bottom:1px solid var(--bd);padding:0 16px;padding-top:env(safe-area-inset-top);flex-shrink:0}
+.hdr-in{height:52px;display:flex;align-items:center;gap:10px}
+.logo{font-size:19px;font-weight:700;letter-spacing:-.5px}
+.logo b{color:var(--g)}
+.scrl{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.pg{max-width:600px;margin:0 auto;padding:18px 16px 32px}
+.bnav{background:#fff;border-top:1px solid var(--bd);display:flex;align-items:stretch;padding-bottom:max(env(safe-area-inset-bottom),0px);flex-shrink:0}
+.bn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:7px 4px 0;border:none;background:transparent;cursor:pointer;font-family:'DM Sans',sans-serif;color:#bbb;font-size:10px;font-weight:600;gap:3px;letter-spacing:.3px;text-transform:uppercase;-webkit-tap-highlight-color:transparent;position:relative;min-height:54px;transition:color .12s}
+.bn.on{color:#1a1a1a}
+.bn-ic{font-size:20px;line-height:1}
+.bn-dot{position:absolute;top:6px;right:calc(50% - 20px);width:7px;height:7px;background:var(--r);border-radius:50%;border:2px solid #fff}
+
+/* ── Utils ── */
+.card{background:#fff;border:1px solid var(--bd);border-radius:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 18px;border-radius:10px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;transition:all .12s;-webkit-tap-highlight-color:transparent;white-space:nowrap}
+.btn-d{background:#1a1a1a;color:#fff}.btn-d:active{background:#333}
+.btn-g{background:var(--g);color:#fff}.btn-g:active{opacity:.85}
+.btn-o{background:transparent;color:#1a1a1a;border:1.5px solid var(--bd)}.btn-o:active{background:#f5f5f2}
+.btn-gh{background:transparent;color:var(--mut);border:1px solid var(--bd)}.btn-gh:active{color:#1a1a1a}
+.btn-r{background:transparent;color:var(--r);border:1px solid var(--r-l)}.btn-r:active{background:var(--r-bg)}
+.btn:disabled{opacity:.35;pointer-events:none}
+.btn-sm{padding:6px 13px;font-size:13px;border-radius:8px}
+.btn-lg{padding:14px 24px;font-size:15px;border-radius:12px}
+.btn-bl{width:100%}
+.badge{display:inline-flex;align-items:center;background:var(--g-bg);color:var(--g);border-radius:99px;font-size:11px;font-weight:700;padding:2px 8px;font-family:var(--mono)}
+.badge-r{background:var(--r-bg);color:var(--r)}
+.badge-gr{background:#f0f0ec;color:#888}
+.tag{display:inline-block;background:#eef2ff;color:#4338ca;border-radius:6px;font-size:11px;font-weight:500;padding:2px 8px}
+.alert{padding:12px 14px;border-radius:10px;font-size:13px;font-weight:500;margin-bottom:14px;line-height:1.45}
+.al-g{background:var(--g-bg);color:var(--g)}
+.al-o{background:var(--o-bg);color:var(--o)}
+.al-b{background:var(--b-bg);color:var(--b)}
+.al-r{background:var(--r-bg);color:var(--r)}
+.spin{width:26px;height:26px;border:2px solid #eee;border-top-color:#1a1a1a;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+.prog{background:#ebebeb;border-radius:99px;height:5px;overflow:hidden}
+.prog-f{height:100%;background:var(--g);border-radius:99px;transition:width .4s}
+.sl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#bbb;margin-bottom:10px}
+.pg-t{font-size:21px;font-weight:700;margin-bottom:3px;letter-spacing:-.3px}
+.pg-s{color:var(--mut);font-size:13px;margin-bottom:0}
+.empty{text-align:center;padding:48px 20px;color:#ccc}
+.empty .ei{font-size:44px;margin-bottom:12px}
+.empty .et{font-size:15px;font-weight:600;color:#aaa;margin-bottom:5px}
+.empty .es{font-size:13px;line-height:1.5}
+.fade{animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+input[type=text],input[type=password],textarea{border:1.5px solid var(--bd);border-radius:10px;padding:12px 14px;font-family:'DM Sans',sans-serif;font-size:16px;background:#fff;color:#1a1a1a;outline:none;transition:border .15s;width:100%}
+input[type=text]:focus,input[type=password]:focus,textarea:focus{border-color:#1a1a1a}
+textarea{resize:none}
+
+/* ── Sheet / modal ── */
+.ovl{position:fixed;inset:0;background:rgba(0,0,0,.38);z-index:300;display:flex;align-items:flex-end;justify-content:center}
+.sht{background:#fff;border-radius:22px 22px 0 0;padding:0 20px calc(20px + env(safe-area-inset-bottom));width:100%;max-width:600px;max-height:88vh;overflow-y:auto;animation:slideUp .25s cubic-bezier(.4,0,.2,1)}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.sht-hdl{width:38px;height:4px;background:#e0e0dc;border-radius:2px;margin:14px auto 18px}
+.sht-t{font-size:18px;font-weight:700;margin-bottom:5px}
+.sht-s{font-size:13px;color:var(--mut);margin-bottom:18px;line-height:1.4}
+.sht-ft{display:flex;gap:10px;margin-top:18px}
+
+/* ── Dashboard ── */
+.dash-hero{background:#1a1a1a;border-radius:16px;padding:20px;margin-bottom:20px;color:#fff}
+.dash-hero-title{font-size:22px;font-weight:700;margin-bottom:3px}
+.dash-hero-sub{font-size:13px;color:#888;margin-bottom:16px}
+.dash-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:4px}
+.dash-stat{background:rgba(255,255,255,.08);border-radius:10px;padding:12px 8px;text-align:center}
+.dash-stat-v{font-size:26px;font-weight:700;font-family:var(--mono)}
+.dash-stat-l{font-size:10px;color:#666;margin-top:2px;text-transform:uppercase;letter-spacing:.4px}
+.dash-due{background:var(--r-bg);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;margin-bottom:16px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.dash-due:active{opacity:.85}
+.course-card{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:16px;margin-bottom:10px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .12s}
+.course-card:active{background:#fafaf8}
+.course-card-hdr{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
+.course-card-name{font-weight:700;font-size:15px;flex:1;line-height:1.3}
+.course-card-meta{font-size:12px;color:#aaa;margin-top:2px;font-family:var(--mono)}
+.course-pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.pill{font-size:11px;font-family:var(--mono);color:#666;display:flex;align-items:center;gap:3px}
+.course-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ── Import / Generate ── */
+.step-row{display:flex;align-items:flex-start;gap:12px;padding:14px 0;border-bottom:1px solid var(--bd2)}
+.step-row:last-child{border-bottom:none}
+.step-num{width:28px;height:28px;border-radius:50%;background:#1a1a1a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;margin-top:1px}
+.step-body{flex:1}
+.step-title{font-weight:700;font-size:14px;margin-bottom:2px}
+.step-desc{font-size:13px;color:#888;line-height:1.45}
+.gen-progress{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:24px;text-align:center;margin-top:16px}
+.gen-step-txt{font-weight:600;font-size:15px;margin-bottom:5px}
+.gen-sub{font-size:12px;color:#aaa;font-family:var(--mono);margin-top:6px}
+.drop-zone{border:2px dashed #d0d0cc;border-radius:14px;padding:36px 20px;text-align:center;cursor:pointer;background:#fafaf8;-webkit-tap-highlight-color:transparent}
+.drop-zone:active{border-color:#aaa}
+
+/* ── Reader ── */
+.reader-bar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;background:#fff;border:1px solid var(--bd);border-radius:12px;padding:10px 12px;margin-bottom:12px}
+.ann-btn{padding:6px 11px;border-radius:8px;border:1.5px solid var(--bd);background:#fff;cursor:pointer;font-size:12px;font-weight:700;-webkit-tap-highlight-color:transparent;transition:all .12s}
+.ann-btn.on{border-color:#1a1a1a;background:#1a1a1a;color:#fff}
+.ann-btn.hy{background:#fff9c4;border-color:#f9d71c;color:#7a6200}
+.ann-btn.hg{background:var(--g-bg);border-color:var(--g);color:var(--g)}
+.ann-btn.hp{background:#fce4ec;border-color:#e91e8c;color:#880e4f}
+.reader-txt{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:18px;font-size:15px;line-height:1.8;color:#1a1a1a;user-select:text;-webkit-user-select:text}
+.hy{background:#fff9c4;border-radius:2px;cursor:pointer}
+.hg{background:var(--g-bg);border-radius:2px;cursor:pointer}
+.hp{background:#fce4ec;border-radius:2px;cursor:pointer}
+.ann-ul{text-decoration:underline 2px #1a1a1a;cursor:pointer}
+.ann-imp{background:#fff3e0;border-left:3px solid #f57c00;padding:2px 6px;border-radius:2px;font-weight:700;cursor:pointer}
+.sel-menu{position:fixed;z-index:500;background:#1a1a1a;border-radius:10px;padding:5px;display:flex;gap:2px;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.sel-btn{padding:7px 10px;border:none;background:transparent;color:#fff;cursor:pointer;border-radius:6px;font-size:13px;font-weight:700;-webkit-tap-highlight-color:transparent}
+.sel-btn:active{background:#333}
+.ann-panel{position:fixed;bottom:0;left:0;right:0;max-height:72vh;background:#fff;border-radius:20px 20px 0 0;box-shadow:0 -4px 24px rgba(0,0,0,.12);z-index:400;display:flex;flex-direction:column;padding-bottom:max(env(safe-area-inset-bottom),16px);animation:slideUp .25s ease}
+.ann-item{padding:12px 0;border-bottom:1px solid var(--bd2)}
+.ann-item:last-child{border-bottom:none}
+
+/* ── Play ── */
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.mode-card{padding:16px 10px;border-radius:12px;border:1.5px solid var(--bd);background:#fff;cursor:pointer;text-align:center;-webkit-tap-highlight-color:transparent;transition:all .12s}
+.mode-card.on{border-color:#1a1a1a;background:#1a1a1a;color:#fff}
+.ck-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid #f5f5f2;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.ck-item:last-child{border-bottom:none}
+.g-bar{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.fc-scene{perspective:900px;height:210px;cursor:pointer;margin-bottom:18px;-webkit-tap-highlight-color:transparent}
+.fc-in{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .42s cubic-bezier(.4,0,.2,1);border-radius:14px}
+.fc-in.flip{transform:rotateY(180deg)}
+.fc-face{position:absolute;width:100%;height:100%;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;border:1px solid var(--bd)}
+.fc-fr{background:#fff}
+.fc-bk{background:#f6fcf7;border-color:var(--g-l);transform:rotateY(180deg)}
+.fc-lb{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#ccc;margin-bottom:12px}
+.fc-tx{font-size:18px;font-weight:600;line-height:1.45}
+.sm2-row{display:flex;gap:8px;justify-content:center}
+.sm2{flex:1;max-width:130px;padding:12px 8px;border-radius:10px;border:1.5px solid;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:700;font-size:13px;-webkit-tap-highlight-color:transparent}
+.sm2:active{opacity:.75}
+.sm2-bad{border-color:var(--r-l);color:var(--r);background:var(--r-bg)}
+.sm2-mid{border-color:var(--o-l);color:var(--o);background:var(--o-bg)}
+.sm2-ok{border-color:var(--g-l);color:var(--g);background:var(--g-bg)}
+.qopt{display:flex;align-items:center;gap:10px;padding:13px 14px;border-radius:10px;border:1.5px solid var(--bd);background:#fff;cursor:pointer;font-size:14px;font-weight:500;margin-bottom:8px;-webkit-tap-highlight-color:transparent;width:100%;text-align:left;font-family:'DM Sans',sans-serif;transition:all .12s}
+.qopt.ok{border-color:var(--g);background:var(--g-bg);color:var(--g)}
+.qopt.ko{border-color:var(--r);background:var(--r-bg);color:var(--r)}
+.qopt.dim{opacity:.4}
+.fill-q{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:20px;font-size:16px;font-weight:600;line-height:2.5;margin-bottom:14px}
+.fill-blank{border:none;border-bottom:2px solid #1a1a1a;background:transparent;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:700;width:140px;outline:none;text-align:center;color:#1a1a1a;-webkit-appearance:none;padding:2px 4px}
+.fill-blank.ok{border-color:var(--g);color:var(--g)}
+.fill-blank.ko{border-color:var(--r);color:var(--r)}
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.match-col{display:flex;flex-direction:column;gap:7px}
+.m-btn{padding:10px;border-radius:10px;border:1.5px solid var(--bd);background:#fff;cursor:pointer;font-size:12px;font-weight:600;text-align:center;-webkit-tap-highlight-color:transparent;line-height:1.35;transition:all .12s;color:#1a1a1a}
+.m-btn.sel{border-color:#1a1a1a;background:#1a1a1a;color:#fff}
+.m-btn.done{border-color:var(--g);background:var(--g-bg);color:var(--g)}
+.m-btn.err{border-color:var(--r);background:var(--r-bg);animation:shake .28s}
+@keyframes shake{0%,100%{transform:translateX(0)}30%{transform:translateX(-5px)}70%{transform:translateX(5px)}}
+.res-card{background:#fff;border:1px solid var(--bd);border-radius:18px;padding:40px 24px;text-align:center}
+
+/* ── Tuteur ── */
+.tut-ovl{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:600;display:flex;flex-direction:column;justify-content:flex-end}
+.tut-sht{background:#f5f5f0;border-radius:22px 22px 0 0;display:flex;flex-direction:column;max-height:92vh;padding-bottom:max(env(safe-area-inset-bottom),16px);animation:slideUp .28s cubic-bezier(.4,0,.2,1)}
+.tut-hdr{display:flex;align-items:center;gap:8px;padding:14px 16px 10px;border-bottom:1px solid var(--bd);background:#fff;border-radius:22px 22px 0 0;flex-shrink:0}
+.tut-body{flex:1;overflow-y:auto;padding:16px}
+.tut-menu{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tut-m-btn{background:#fff;border:1.5px solid var(--bd);border-radius:12px;padding:16px 12px;text-align:center;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .12s}
+.tut-m-btn:active{border-color:#1a1a1a}
+.tut-m-btn.full{grid-column:1/-1}
+.tut-passage{background:#fff;border:1px solid var(--bd);border-radius:10px;padding:12px;font-size:13px;line-height:1.6;color:#666;margin-bottom:14px;max-height:80px;overflow-y:auto;font-style:italic}
+.tut-q{font-size:16px;font-weight:600;line-height:1.5;margin-bottom:14px}
+.tut-eval{padding:14px;border-radius:10px;font-size:14px;line-height:1.6;margin-top:10px;background:var(--b-bg)}
+.chat-wrap{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.chat-bub{padding:11px 14px;border-radius:12px;font-size:14px;line-height:1.55;max-width:88%}
+.chat-usr{background:#1a1a1a;color:#fff;margin-left:auto;border-radius:12px 12px 2px 12px}
+.chat-ai{background:#fff;border:1px solid var(--bd);margin-right:auto;border-radius:12px 12px 12px 2px}
+.chat-inp-row{display:flex;gap:8px;padding:10px 16px;border-top:1px solid var(--bd);background:#fff;flex-shrink:0}
+.chat-inp{flex:1;border:1.5px solid var(--bd);border-radius:10px;padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:15px;outline:none}
+.chat-inp:focus{border-color:#1a1a1a}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+'use strict';
+
+// ── SM-2 ─────────────────────────────────────────────────────────────────────
+function sm2(card,q){
+  let{interval:iv=0,repetitions:rp=0,easeFactor:ef=2.5}=card;
+  if(q>=3){iv=rp===0?1:rp===1?6:Math.round(iv*ef);rp++;}
+  else{rp=0;iv=1;}
+  ef=Math.max(1.3,ef+.1-(5-q)*(.08+(5-q)*.02));
+  return{interval:iv,repetitions:rp,easeFactor:ef,nextReview:Date.now()+iv*86400000};
+}
+const isDue=c=>!c.nextReview||Date.now()>=c.nextReview;
+
+// ── Storage ───────────────────────────────────────────────────────────────────
+const LS={
+  get:(k,d={})=>{try{const r=localStorage.getItem(k);return r?JSON.parse(r):d;}catch{return d;}},
+  set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){console.error(e);}}
+};
+function loadData(){return LS.get('nl4',{groups:[],decks:[],cards:[]});}
+function saveData(d){LS.set('nl4',d);}
+function loadTexts(){return LS.get('nl4-txt',{});}
+function saveTexts(d){LS.set('nl4-txt',d);}
+function loadAnnotations(){return LS.get('nl4-ann',{});}
+function saveAnnotations(d){LS.set('nl4-ann',d);}
+
+// ── State ─────────────────────────────────────────────────────────────────────
+const S={
+  tab:'home',
+  data:loadData(),
+  // home / library
+  groupId:null,
+  showNewGroup:false,gName:'',
+  showImportSheet:false,
+  generating:null, // {step,pct}
+  genError:'',
+  // reader
+  rCourseId:null,
+  rAnnotations:loadAnnotations(),
+  rTool:null,
+  rAnnoPanel:false,
+  rEditNoteId:null,
+  rSelMenu:null,
+  rPdfLoading:false,rPdfPct:0,
+  // play
+  mode:'flash',selDecks:new Set(),session:null,
+  // tuteur
+  tuteur:null,
+  // api key
+  apiKey:LS.get('nl4-key',''),
+  showApiKey:false,
+  _pendingAction:null,
+};
+
+function set(p){Object.assign(S,typeof p==='function'?p(S):p);R();}
+function persist(d){S.data=d;saveData(d);R();}
+const h=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+
+// ── API ───────────────────────────────────────────────────────────────────────
+function getKey(){return S.apiKey||LS.get('nl4-key','')||'';}
+function setKey(k){S.apiKey=k;LS.set('nl4-key',k);}
+async function claude(sys,usr,max=2000){
+  const k=getKey();
+  if(!k)throw new Error('NO_KEY');
+  const r=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:max,system:sys,messages:[{role:'user',content:usr}]})
+  });
+  if(!r.ok){const e=await r.json();throw new Error(e.error?.message||`HTTP ${r.status}`);}
+  const d=await r.json();
+  return d.content.filter(b=>b.type==='text').map(b=>b.text).join('');
+}
+function parseJ(t){try{return JSON.parse(t.replace(/```json\n?|```/g,'').trim());}catch{return null;}}
+
+// ── Render ────────────────────────────────────────────────────────────────────
+function R(){
+  const due=S.data.cards.filter(isDue).length;
+  const tabs=[
+    ['home','🏠','Accueil'],
+    ['library','📚','Cours'],
+    ['reader','📖','Lire'],
+    ['play','▶','Réviser'],
+    ['stats','◉','Stats'],
+  ];
+  document.getElementById('app').innerHTML=`
+    <div id="ai">
+      <div class="hdr"><div class="hdr-in">
+        <div class="logo">Naturo<b>Learn</b></div>
+        <div style="margin-left:auto;display:flex;gap:8px">
+          <button class="btn btn-gh btn-sm" onclick="promptApiKey()" title="Clé API">${getKey()?'🔑':'🔑 Clé API'}</button>
+        </div>
+      </div></div>
+      <div class="scrl"><div class="pg">
+        ${S.tab==='home'?rHome():S.tab==='library'?rLibrary():S.tab==='reader'?rReader():S.tab==='play'?rPlay():rStats()}
+      </div></div>
+      <nav class="bnav">
+        ${tabs.map(([id,ic,lb])=>`
+          <button class="bn ${S.tab===id?'on':''}" onclick="goTab('${id}')">
+            <span class="bn-ic">${ic}</span><span>${lb}</span>
+            ${id==='play'&&due>0?`<span class="bn-dot"></span>`:''}
+          </button>`).join('')}
+      </nav>
+      ${S.showNewGroup?rNewGroupSheet():''}
+      ${S.showApiKey?rApiKeySheet():''}
+      ${S.rAnnoPanel?rAnnoPanel():''}
+      ${S.rSelMenu?rSelMenu():''}
+      ${S.tuteur?rTuteur():''}
+    </div>`;
+  const fi=document.getElementById('gen-fi');
+  if(fi)fi.onchange=e=>handleGenPdf(e.target.files[0]);
+  const rfi=document.getElementById('reader-fi');
+  if(rfi)rfi.onchange=e=>loadReaderPdf(e.target.files[0],S.rCourseId);
+}
+function goTab(t){set({tab:t,session:null,rCourseId:null});}
+
+// ════════════════════════════════════════════════════════════════════
+// HOME — tableau de bord
+// ════════════════════════════════════════════════════════════════════
+function rHome(){
+  const{data}=S;
+  const total=data.cards.length;
+  const due=data.cards.filter(isDue).length;
+  const mastered=data.cards.filter(c=>(c.repetitions||0)>=3&&!isDue(c)).length;
+  const pct=total>0?Math.round((mastered/total)*100):0;
+
+  return`<div class="fade">
+    <!-- Hero -->
+    <div class="dash-hero">
+      <div class="dash-hero-title">Bonjour 👋</div>
+      <div class="dash-hero-sub">Votre espace d'apprentissage naturopathie</div>
+      <div class="dash-stats">
+        <div class="dash-stat"><div class="dash-stat-v">${total}</div><div class="dash-stat-l">Cartes</div></div>
+        <div class="dash-stat"><div class="dash-stat-v" style="color:#f87171">${due}</div><div class="dash-stat-l">À réviser</div></div>
+        <div class="dash-stat"><div class="dash-stat-v" style="color:#4ade80">${mastered}</div><div class="dash-stat-l">Maîtrisées</div></div>
+      </div>
+      ${total>0?`<div style="margin-top:14px"><div style="background:rgba(255,255,255,.12);border-radius:99px;height:6px;overflow:hidden"><div style="height:6px;background:#4ade80;border-radius:99px;width:${pct}%"></div></div><div style="font-size:11px;color:#666;margin-top:5px;text-align:center">${pct}% du programme maîtrisé</div></div>`:''}
+    </div>
+
+    <!-- Révisions urgentes -->
+    ${due>0?`
+      <div class="dash-due" onclick="goTab('play')">
+        <div style="font-size:28px">⏰</div>
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:15px;color:var(--r)">${due} carte(s) à réviser aujourd'hui</div>
+          <div style="font-size:13px;color:#aaa;margin-top:2px">Appuyez pour commencer la révision</div>
+        </div>
+        <span style="color:#ddd;font-size:20px">›</span>
+      </div>
+    `:''}
+
+    <!-- Actions rapides -->
+    <div class="sl" style="margin-bottom:12px">Actions rapides</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px">
+      <button class="btn btn-d" onclick="goTab('play')" style="border-radius:12px;padding:14px;flex-direction:column;gap:4px">
+        <span style="font-size:22px">▶</span><span style="font-size:13px">Réviser</span>
+      </button>
+      <button class="btn btn-o" onclick="goTab('reader')" style="border-radius:12px;padding:14px;flex-direction:column;gap:4px">
+        <span style="font-size:22px">📖</span><span style="font-size:13px;font-weight:600">Lire un cours</span>
+      </button>
+      <button class="btn btn-o" onclick="goTab('library')" style="border-radius:12px;padding:14px;flex-direction:column;gap:4px">
+        <span style="font-size:22px">📚</span><span style="font-size:13px;font-weight:600">Mes cours</span>
+      </button>
+      <button class="btn btn-o" onclick="goTab('stats')" style="border-radius:12px;padding:14px;flex-direction:column;gap:4px">
+        <span style="font-size:22px">◉</span><span style="font-size:13px;font-weight:600">Statistiques</span>
+      </button>
+    </div>
+
+    <!-- Mes cours -->
+    ${data.decks.length>0?`
+      <div class="sl" style="margin-bottom:12px">Mes cours (${data.decks.length})</div>
+      ${data.decks.slice(0,4).map(deck=>{
+        const dc=data.cards.filter(c=>c.deckId===deck.id);
+        const d=dc.filter(isDue).length;
+        const m=dc.filter(c=>(c.repetitions||0)>=3).length;
+        const p=dc.length>0?Math.round((m/dc.length)*100):0;
+        return`<div class="course-card" onclick="openCourse('${deck.id}')">
+          <div class="course-card-hdr">
+            <div style="flex:1"><div class="course-card-name">${h(deck.name)}</div>
+            <div class="course-card-meta">${dc.length} cartes</div></div>
+            ${d>0?`<span class="badge badge-r">${d} dues</span>`:`<span class="badge" style="background:#f0f0ec;color:#888">${p}%</span>`}
+          </div>
+          <div class="prog"><div class="prog-f" style="width:${p}%"></div></div>
+        </div>`;
+      }).join('')}
+      ${data.decks.length>4?`<div style="text-align:center;margin-top:8px"><button class="btn btn-gh btn-sm" onclick="goTab('library')">Voir tous les cours →</button></div>`:''}
+    `:`
+      <div class="empty">
+        <div class="ei">🌿</div>
+        <div class="et">Commencez votre apprentissage</div>
+        <div class="es">Importez votre premier cours PDF<br>pour générer vos exercices automatiquement</div>
+        <button class="btn btn-d" style="margin-top:16px" onclick="goTab('library')">Importer un cours</button>
+      </div>
+    `}
+  </div>`;
+}
+
+function openCourse(deckId){
+  set({tab:'library',groupId:S.data.decks.find(d=>d.id===deckId)?.groupId||null});
+}
+
+// ════════════════════════════════════════════════════════════════════
+// LIBRARY
+// ════════════════════════════════════════════════════════════════════
+function rLibrary(){
+  if(!S.groupId)return rGroupList();
+  return rGroupDetail();
+}
+
+function rGroupList(){
+  const{data}=S;
+  return`<div class="fade">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px">
+      <div><div class="pg-t">Mes cours</div>
+      <div class="pg-s" style="margin-bottom:0">${data.groups.length} groupe(s) · ${data.decks.length} cours</div></div>
+      <button class="btn btn-d btn-sm" onclick="set({showNewGroup:true})">+ Groupe</button>
+    </div>
+    ${data.groups.length===0?`
+      <div class="empty"><div class="ei">📂</div>
+        <div class="et">Aucun groupe</div>
+        <div class="es">Créez un groupe pour organiser vos cours<br>(ex : Cycle 1, Cycle 2…)</div>
+        <button class="btn btn-d" style="margin-top:16px" onclick="set({showNewGroup:true})">Créer un groupe</button>
+      </div>
+    `:`<div class="card">
+      ${data.groups.map(g=>{
+        const gd=data.decks.filter(d=>d.groupId===g.id);
+        const gc=data.cards.filter(c=>gd.some(d=>d.id===c.deckId));
+        const due=gc.filter(isDue).length;
+        return`<div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--bd2);cursor:pointer;-webkit-tap-highlight-color:transparent" onclick="set({groupId:'${g.id}'})" onactive="this.style.background='#fafaf8'">
+          <span style="font-size:22px">📁</span>
+          <div style="flex:1">
+            <div style="font-weight:700;font-size:15px">${h(g.name)}</div>
+            <div style="font-size:12px;color:#aaa;margin-top:1px">${gd.length} cours · ${gc.length} cartes${due>0?` · <span style="color:var(--r)">${due} à réviser</span>`:''}</div>
+          </div>
+          ${due>0?`<span class="badge badge-r">${due}</span>`:''}
+          <span style="color:#ddd;font-size:18px">›</span>
+        </div>`;
+      }).join('')}
+    </div>`}
+  </div>`;
+}
+
+function rGroupDetail(){
+  const{data,groupId,generating,genError}=S;
+  const group=data.groups.find(g=>g.id===groupId);
+  const decks=data.decks.filter(d=>d.groupId===groupId);
+  const hasKey=!!getKey();
+
+  return`<div class="fade">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+      <button class="btn btn-gh btn-sm" onclick="set({groupId:null})">← Retour</button>
+      <div style="flex:1"><div class="pg-t" style="margin-bottom:0">${h(group?.name||'')}</div>
+        <div style="font-size:12px;color:#aaa">${decks.length} cours</div></div>
+    </div>
+
+    <!-- Comment ça marche -->
+    ${decks.length===0&&!generating?`
+      <div class="card" style="padding:16px;margin-bottom:16px">
+        <div style="font-weight:700;font-size:14px;margin-bottom:12px">📋 Comment importer un cours</div>
+        <div class="step-row">
+          <div class="step-num">1</div>
+          <div class="step-body"><div class="step-title">Préparez votre PDF</div>
+          <div class="step-desc">Votre cours au format .pdf depuis l'app Fichiers iPhone</div></div>
+        </div>
+        <div class="step-row">
+          <div class="step-num">2</div>
+          <div class="step-body"><div class="step-title">Configurez la clé API</div>
+          <div class="step-desc">Nécessaire pour l'analyse IA. Une seule fois. <button class="btn btn-gh btn-sm" style="padding:3px 10px;font-size:12px" onclick="promptApiKey()">${hasKey?'✓ Clé configurée':'Configurer →'}</button></div></div>
+        </div>
+        <div class="step-row">
+          <div class="step-num">3</div>
+          <div class="step-body"><div class="step-title">L'IA analyse votre cours</div>
+          <div class="step-desc">Extraction des concepts, génération de flashcards, QCM, textes à trous et associations automatiquement</div></div>
+        </div>
+        <div class="step-row">
+          <div class="step-num">4</div>
+          <div class="step-body"><div class="step-title">Révisez !</div>
+          <div class="step-desc">Vos exercices sont prêts dans l'onglet Réviser avec répétition espacée SM-2</div></div>
+        </div>
+      </div>
+    `:''}
+
+    ${genError?`<div class="alert al-r">❌ ${h(genError)}</div>`:''}
+
+    <!-- Generating progress -->
+    ${generating?`
+      <div class="gen-progress">
+        <div class="spin"></div>
+        <div class="gen-step-txt" style="margin-top:12px">${h(generating.step)}</div>
+        <div class="prog" style="margin:12px 0 6px"><div class="prog-f" style="width:${generating.pct}%"></div></div>
+        <div class="gen-sub">${generating.pct}% — L'IA analyse votre cours…</div>
+        <div style="font-size:12px;color:#bbb;margin-top:6px">Cela peut prendre 2 à 3 minutes</div>
+      </div>
+    `:`
+      <!-- Import button -->
+      <div class="drop-zone" onclick="document.getElementById('gen-fi').click()" style="margin-bottom:16px">
+        <div style="font-size:36px;margin-bottom:10px">📄</div>
+        <div style="font-weight:700;font-size:15px;margin-bottom:6px">Importer un cours PDF</div>
+        <div style="font-size:13px;color:#aaa">L'IA génère automatiquement tous vos exercices</div>
+        ${!hasKey?`<div style="font-size:12px;color:var(--r);margin-top:8px">⚠️ Clé API requise — appuyez sur 🔑 en haut</div>`:''}
+      </div>
+      <input type="file" id="gen-fi" accept=".pdf" style="display:none">
+    `}
+
+    <!-- Existing decks -->
+    ${decks.length>0?`
+      <div class="sl" style="margin-bottom:10px">Cours importés</div>
+      ${decks.map(deck=>{
+        const dc=data.cards.filter(c=>c.deckId===deck.id);
+        const due=dc.filter(isDue).length;
+        const m=dc.filter(c=>(c.repetitions||0)>=3).length;
+        const p=dc.length>0?Math.round((m/dc.length)*100):0;
+        return`<div class="course-card">
+          <div class="course-card-hdr">
+            <div style="flex:1">
+              <div class="course-card-name">${h(deck.name)}</div>
+              <div class="course-card-meta">${(deck.counts?.flash||0)} flash · ${(deck.counts?.qcm||0)} QCM · ${(deck.counts?.fill||0)} trous · ${(deck.counts?.match||0)} assoc.</div>
+            </div>
+            ${due>0?`<span class="badge badge-r">${due} dues</span>`:m===dc.length&&dc.length>0?`<span class="badge">✓</span>`:''}
+          </div>
+          <div class="prog" style="margin-bottom:10px"><div class="prog-f" style="width:${p}%"></div></div>
+          ${deck.themes?`<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px">${deck.themes.map(t=>`<span class="tag">${h(t)}</span>`).join('')}</div>`:''}
+          <div class="course-actions">
+            <button class="btn btn-o btn-sm" onclick="enrichDeck('${deck.id}')">↺ Enrichir</button>
+            <button class="btn btn-o btn-sm" onclick="set({tab:'reader',rCourseId:'${deck.id}'})">📖 Lire</button>
+            <button class="btn btn-o btn-sm" onclick="set({tab:'play'})">▶ Réviser</button>
+            <button class="btn btn-r btn-sm" onclick="delDeck('${deck.id}')">Suppr.</button>
+          </div>
+        </div>`;
+      }).join('')}
+    `:''}
+
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--bd2)">
+      <button class="btn btn-r btn-sm" onclick="delGroup('${groupId}')">Supprimer ce groupe</button>
+    </div>
+  </div>`;
+}
+
+// ── New group sheet ───────────────────────────────────────────────────────────
+function rNewGroupSheet(){
+  return`<div class="ovl" onclick="if(event.target.classList.contains('ovl'))set({showNewGroup:false,gName:''})">
+    <div class="sht">
+      <div class="sht-hdl"></div>
+      <div class="sht-t">Nouveau groupe</div>
+      <div class="sht-s">Ex : Cycle 1, Cycle 2, Module Phytothérapie…</div>
+      <input type="text" id="gni" placeholder="Nom du groupe" value="${h(S.gName)}"
+        oninput="S.gName=this.value" onkeydown="if(event.key==='Enter')createGroup()"
+        autocorrect="off" autocapitalize="words">
+      <div class="sht-ft">
+        <button class="btn btn-gh" style="flex:1" onclick="set({showNewGroup:false,gName:''})">Annuler</button>
+        <button class="btn btn-d" style="flex:1" onclick="createGroup()">Créer</button>
+      </div>
+    </div>
+  </div>`;
+}
+function createGroup(){
+  const name=(document.getElementById('gni')?.value||S.gName).trim();
+  if(!name)return;
+  const g={id:`g${Date.now()}`,name,createdAt:Date.now()};
+  persist({...S.data,groups:[...S.data.groups,g]});
+  set({showNewGroup:false,gName:'',groupId:g.id});
+}
+function delGroup(gid){
+  if(!confirm('Supprimer ce groupe et tous ses cours ?'))return;
+  const dids=S.data.decks.filter(d=>d.groupId===gid).map(d=>d.id);
+  persist({...S.data,groups:S.data.groups.filter(g=>g.id!==gid),decks:S.data.decks.filter(d=>d.groupId!==gid),cards:S.data.cards.filter(c=>!dids.includes(c.deckId))});
+  set({groupId:null});
+}
+function delDeck(did){
+  if(!confirm('Supprimer ce cours ?'))return;
+  persist({...S.data,decks:S.data.decks.filter(d=>d.id!==did),cards:S.data.cards.filter(c=>c.deckId!==did)});
+}
+
+// ── API Key sheet ─────────────────────────────────────────────────────────────
+function promptApiKey(){set({showApiKey:true});}
+function rApiKeySheet(){
+  return`<div class="ovl" onclick="if(event.target.classList.contains('ovl')&&'${S.apiKey}')set({showApiKey:false})">
+    <div class="sht">
+      <div class="sht-hdl"></div>
+      <div class="sht-t">🔑 Clé API Anthropic</div>
+      <div class="sht-s">Nécessaire pour analyser les PDFs et générer les exercices.<br>Stockée uniquement sur votre iPhone.<br><strong>console.anthropic.com</strong> → API Keys → Create Key</div>
+      <input type="password" id="api-inp" placeholder="sk-ant-api03-…" value="${h(S.apiKey)}"
+        autocorrect="off" autocapitalize="none" spellcheck="false">
+      <div style="font-size:12px;color:#aaa;margin-top:8px;line-height:1.5">
+        💡 Coût estimé : ~0,40€ par cours importé · ~0,10€/jour d'utilisation du tuteur IA
+      </div>
+      <div class="sht-ft">
+        ${S.apiKey?`<button class="btn btn-gh" style="flex:1" onclick="set({showApiKey:false})">Annuler</button>`:''}
+        <button class="btn btn-d" style="flex:1" onclick="saveApiKeyAction()">Enregistrer</button>
+      </div>
+    </div>
+  </div>`;
+}
+function saveApiKeyAction(){
+  const k=document.getElementById('api-inp')?.value?.trim();
+  if(!k)return;
+  setKey(k);
+  set({showApiKey:false});
+  if(S._pendingAction){const a=S._pendingAction;S._pendingAction=null;a();}
+}
+function requireKey(action){
+  if(getKey()){action();return;}
+  S._pendingAction=action;
+  set({showApiKey:true});
+}
+
+// ════════════════════════════════════════════════════════════════════
+// PDF IMPORT + AI GENERATION
+// ════════════════════════════════════════════════════════════════════
+async function handleGenPdf(file){
+  if(!file?.name.toLowerCase().endsWith('.pdf')){alert('Fichier PDF requis.');return;}
+  requireKey(()=>_doGenPdf(file));
+}
+
+async function _doGenPdf(file){
+  set({generating:{step:'Lecture du PDF…',pct:5},genError:''});
+  try{
+    const b64=await new Promise((res,rej)=>{
+      const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(file);
+    });
+    const doc={type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}};
+
+    // Pass 1 : structure
+    set({generating:{step:'Analyse de la structure du cours…',pct:10}});
+    const st=parseJ(await claude(
+      `Analyse un cours de naturopathie. RÉPONDS UNIQUEMENT EN JSON VALIDE sans backticks.\nFormat: {"title":"...","themes":["thème 1","thème 2"...]}\nIdentifie 4 à 8 grands thèmes/chapitres précis.`,
+      [{type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},{type:'text',text:'Identifie le titre et les grands thèmes de ce cours.'}]
+    ))||{};
+    const title=st.title||file.name.replace(/\.pdf$/i,'');
+    const themes=st.themes?.length?st.themes:['Général'];
+    set({generating:{step:`${themes.length} thèmes détectés — extraction des concepts…`,pct:15}});
+
+    // Pass 2 : concepts par thème (parallèle)
+    const cSys=`Expert naturopathie/pédagogie. RÉPONDS UNIQUEMENT EN JSON VALIDE sans backticks.\nFormat: {"concepts":[{"term":"...","definition":"...","category":"..."}]}\nExtrais TOUS les concepts clés du thème : termes techniques, plantes, principes actifs, syndromes, méthodes, contre-indications, mécanismes. Vise 15-25 concepts.`;
+    let done=0;
+    const chunks=await Promise.all(themes.map(theme=>
+      claude(cSys,[doc,{type:'text',text:`Extrais uniquement les concepts du thème : "${theme}".`}])
+        .then(t=>{done++;set({generating:{step:`Thème ${done}/${themes.length} extrait…`,pct:15+Math.round((done/themes.length)*35)}});return parseJ(t)?.concepts||[];})
+        .catch(()=>[])
+    ));
+    const seen=new Set();
+    const concepts=chunks.flat().filter(c=>{
+      if(!c?.term)return false;
+      const k=c.term.toLowerCase().trim();
+      if(seen.has(k))return false;
+      seen.add(k);return true;
+    });
+    set({generating:{step:`${concepts.length} concepts — génération des exercices…`,pct:52}});
+
+    // Pass 3 : exercices (2 lots parallèles)
+    const eSys=`Expert exercices pédagogiques naturopathie. RÉPONDS UNIQUEMENT EN JSON VALIDE sans backticks.\nFormat: {"qcm":[{"question":"...","options":["A","B","C","D"],"answer":0,"explanation":"..."}],"fill":[{"sentence":"...___BLANK___...","answer":"mot","hint":"..."}],"match":[{"term":"...","definition":"..."}]}\nRègles: QCM=4 options, answer=index 0-3. fill=UN mot. match=termes courts, définitions max 12 mots. Génère 12 QCM + 8 fill + 8 match.`;
+    const half=Math.ceil(concepts.length/2);
+    const[e1,e2]=await Promise.all([concepts.slice(0,half),concepts.slice(half)].map((ch,i)=>
+      claude(eSys,`Cours:"${title}"\nConcepts lot ${i+1}:\n${JSON.stringify(ch)}\nGénère les exercices.`)
+        .then(t=>{set({generating:{step:`Exercices lot ${i+1}/2…`,pct:52+(i+1)*18}});return parseJ(t)||{};})
+        .catch(()=>({}))
+    ));
+    const qcm=[...(e1.qcm||[]),...(e2.qcm||[])];
+    const fill=[...(e1.fill||[]),...(e2.fill||[])];
+    const match=[...(e1.match||[]),...(e2.match||[])];
+    set({generating:{step:'Sauvegarde…',pct:95}});
+
+    const did=`d${Date.now()}`;
+    const now=Date.now();
+    const cards=[
+      ...concepts.map((c,i)=>({id:`${did}_f${i}`,deckId:did,type:'flash',front:c.term,back:c.definition,category:c.category||'',interval:0,repetitions:0,easeFactor:2.5,nextReview:now})),
+      ...qcm.map((q,i)=>({id:`${did}_q${i}`,deckId:did,type:'qcm',question:q.question,options:q.options,answer:q.answer,explanation:q.explanation,interval:0,repetitions:0,easeFactor:2.5,nextReview:now})),
+      ...fill.map((f,i)=>({id:`${did}_fi${i}`,deckId:did,type:'fill',sentence:f.sentence,answer:f.answer,hint:f.hint,interval:0,repetitions:0,easeFactor:2.5,nextReview:now})),
+      ...match.map((m,i)=>({id:`${did}_m${i}`,deckId:did,type:'match',term:m.term,definition:m.definition,interval:0,repetitions:0,easeFactor:2.5,nextReview:now})),
+    ];
+    const deck={id:did,groupId:S.groupId,name:title,fileName:file.name,themes,createdAt:now,counts:{flash:concepts.length,qcm:qcm.length,fill:fill.length,match:match.length}};
+    persist({...S.data,decks:[...S.data.decks,deck],cards:[...S.data.cards,...cards]});
+    set({generating:null});
+  }catch(e){
+    console.error(e);
+    if(e.message==='NO_KEY'){set({generating:null});promptApiKey();return;}
+    set({generating:null,genError:'Erreur : '+(e.message||'inconnue')});
+  }
+}
+
+async function enrichDeck(deckId){
+  requireKey(()=>_doEnrich(deckId));
+}
+async function _doEnrich(deckId){
+  const deck=S.data.decks.find(d=>d.id===deckId);
+  if(!deck)return;
+  set({generating:{step:'Génération de nouveaux exercices…',pct:10}});
+  try{
+    const fc=S.data.cards.filter(c=>c.deckId===deckId&&c.type==='flash');
+    const exQ=S.data.cards.filter(c=>c.deckId===deckId&&c.type==='qcm').map(c=>c.question).slice(0,20);
+    const exF=S.data.cards.filter(c=>c.deckId===deckId&&c.type==='fill').map(c=>c.answer).slice(0,20);
+    const eSys=`Expert exercices pédagogiques naturopathie. RÉPONDS UNIQUEMENT EN JSON VALIDE sans backticks.\nFormat: {"qcm":[...],"fill":[...],"match":[...]}\nGénère des exercices DIFFÉRENTS des existants. Règles: QCM=4 options, answer=index 0-3. fill=UN mot. match=termes courts. Génère 10 QCM + 8 fill + 8 match.`;
+    const half=Math.ceil(fc.length/2);
+    const[e1,e2]=await Promise.all([fc.slice(0,half),fc.slice(half)].map((ch,i)=>
+      claude(eSys,`Cours:"${deck.name}"\nThèmes:${deck.themes?.join(',')}\nConcepts:\n${JSON.stringify(ch.map(c=>({term:c.front,def:c.back})))}\nQCM existants:${JSON.stringify(exQ)}\nFill existants:${JSON.stringify(exF)}\nGénère de NOUVEAUX exercices.`)
+        .then(t=>{set({generating:{step:`Lot ${i+1}/2…`,pct:30+(i+1)*30}});return parseJ(t)||{};})
+        .catch(()=>({}))
+    ));
+    const qcm=[...(e1.qcm||[]),...(e2.qcm||[])];
+    const fill=[...(e1.fill||[]),...(e2.fill||[])];
+    const match=[...(e1.match||[]),...(e2.match||[])];
+    const now=Date.now();
+    const nc=[
+      ...qcm.map((q,i)=>({id:`${deckId}_rq${now}_${i}`,deckId,type:'qcm',question:q.question,options:q.options,answer:q.answer,explanation:q.explanation,interval:0,repetitions:0,easeFactor:2.5,nextReview:now})),
+      ...fill.map((f,i)=>({id:`${deckId}_rf${now}_${i}`,deckId,type:'fill',sentence:f.sentence,answer:f.answer,hint:f.hint,interval:0,repetitions:0,easeFactor:2.5,nextReview:now})),
+      ...match.map((m,i)=>({id:`${deckId}_rm${now}_${i}`,deckId,type:'match',term:m.term,definition:m.definition,interval:0,repetitions:0,easeFactor:2.5,nextReview:now})),
+    ];
+    persist({...S.data,decks:S.data.decks.map(d=>d.id===deckId?{...d,counts:{...d.counts,qcm:(d.counts.qcm||0)+qcm.length,fill:(d.counts.fill||0)+fill.length,match:(d.counts.match||0)+match.length}}:d),cards:[...S.data.cards,...nc]});
+    set({generating:null});
+    alert(`✅ ${qcm.length+fill.length+match.length} nouveaux exercices ajoutés !`);
+  }catch(e){
+    if(e.message==='NO_KEY'){set({generating:null});promptApiKey();return;}
+    set({generating:null,genError:'Erreur enrichissement : '+(e.message||'inconnue')});
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════
+// READER
+// ════════════════════════════════════════════════════════════════════
+function rReader(){
+  if(!S.rCourseId)return rReaderList();
+  return rReaderCourse();
+}
+function rReaderList(){
+  const{data}=S;
+  const texts=loadTexts();
+  return`<div class="fade">
+    <div class="pg-t" style="margin-bottom:4px">Lecteur</div>
+    <div class="pg-s" style="margin-bottom:20px">Lisez et annotez vos cours</div>
+    ${data.decks.length===0?`<div class="empty"><div class="ei">📖</div><div class="et">Aucun cours</div><div class="es">Importez un cours depuis l'onglet Cours</div></div>`:`
+      <div class="card">
+        ${data.groups.map(g=>{
+          const gd=data.decks.filter(d=>d.groupId===g.id);
+          if(!gd.length)return'';
+          return`<div style="padding:8px 16px 4px;font-size:11px;font-weight:700;color:#bbb;text-transform:uppercase;letter-spacing:1.2px;background:#fafaf8;border-bottom:1px solid var(--bd2)">${h(g.name)}</div>
+          ${gd.map(deck=>{
+            const has=!!texts[deck.id];
+            const an=(S.rAnnotations[deck.id]||[]).length;
+            return`<div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--bd2);cursor:pointer;-webkit-tap-highlight-color:transparent" onclick="set({rCourseId:'${deck.id}'})">
+              <span style="font-size:22px">${has?'📖':'📄'}</span>
+              <div style="flex:1"><div style="font-weight:700;font-size:14px">${h(deck.name)}</div>
+              <div style="font-size:12px;color:#aaa;margin-top:2px">${has?`Texte chargé · ${an} annotation(s)`:'PDF à charger'}</div></div>
+              <span style="color:#ddd;font-size:18px">›</span>
+            </div>`;
+          }).join('')}`;
+        }).join('')}
+      </div>
+    `}
+  </div>`;
+}
+
+function rReaderCourse(){
+  const{rCourseId,rTool,rPdfLoading,rPdfPct}=S;
+  const deck=S.data.decks.find(d=>d.id===rCourseId);
+  const texts=loadTexts();
+  const text=texts[rCourseId];
+  const annos=S.rAnnotations[rCourseId]||[];
+  const toolBtns=[['hy','🟡','Jaune'],['hg','🟢','Vert'],['hp','🩷','Rose'],['ul','U͟','Souligner'],['imp','⭐','Important'],['note','📝','Note']];
+
+  return`<div class="fade">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <button class="btn btn-gh btn-sm" onclick="set({rCourseId:null})">← Retour</button>
+      <div style="flex:1;font-weight:700;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${h(deck?.name||'')}</div>
+      <button class="btn btn-gh btn-sm" onclick="set({rAnnoPanel:true})">📝 ${annos.length}</button>
+    </div>
+
+    ${rPdfLoading?`
+      <div style="background:#fff;border:1px solid var(--bd);border-radius:14px;padding:28px;text-align:center">
+        <div class="spin"></div>
+        <div style="font-weight:600;font-size:14px;margin:12px 0 8px">Extraction du texte…</div>
+        <div class="prog" style="margin-bottom:6px"><div class="prog-f" style="width:${rPdfPct}%"></div></div>
+        <div style="font-size:12px;color:#aaa;font-family:var(--mono)">${rPdfPct}%</div>
+      </div>
+    `:!text?`
+      <div class="drop-zone" onclick="document.getElementById('reader-fi').click()">
+        <div style="font-size:36px;margin-bottom:10px">📄</div>
+        <div style="font-weight:700;font-size:15px;margin-bottom:6px">Charger le PDF pour la lecture</div>
+        <div style="font-size:13px;color:#aaa">Le texte sera extrait une seule fois et sauvegardé</div>
+      </div>
+      <input type="file" id="reader-fi" accept=".pdf" style="display:none">
+    `:`
+      <div class="reader-bar">
+        <span style="font-size:11px;font-weight:700;color:#bbb;text-transform:uppercase;letter-spacing:1px">Annoter :</span>
+        ${toolBtns.map(([id,ic,lb])=>`<button class="ann-btn ${rTool===id?'on':id.startsWith('h')?id:''}" onclick="setRTool('${id}')" title="${lb}">${ic}</button>`).join('')}
+        ${rTool?`<button class="ann-btn" onclick="setRTool(null)" style="color:var(--r);border-color:var(--r-l)">✕</button>`:''}
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+        <button class="btn btn-d btn-sm" onclick="openTuteur('full')">🤖 Tester ce cours</button>
+        ${S._rSel?.text?`<button class="btn btn-o btn-sm" onclick="openTuteur('sel')">🤖 Tester la sélection</button>`:''}
+      </div>
+      <div id="reader-txt" class="reader-txt" onmouseup="handleSel(event)" ontouchend="handleSel(event)">
+        ${renderAnnTxt(rCourseId,text,annos)}
+      </div>
+    `}
+  </div>`;
+}
+
+function setRTool(t){set({rTool:t,rSelMenu:null});}
+
+// PDF reader extraction
+async function loadReaderPdf(file,deckId){
+  if(!file)return;
+  set({rPdfLoading:true,rPdfPct:5});
+  try{
+    if(!window.pdfjsLib){
+      await new Promise((res,rej)=>{
+        const s=document.createElement('script');
+        s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+        s.onload=res;s.onerror=rej;document.head.appendChild(s);
+      });
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+    const ab=await file.arrayBuffer();
+    const pdf=await window.pdfjsLib.getDocument({data:ab}).promise;
+    let txt='';
+    for(let i=1;i<=pdf.numPages;i++){
+      const pg=await pdf.getPage(i);
+      const tc=await pg.getTextContent();
+      txt+=tc.items.map(it=>it.str).join(' ')+'\n\n';
+      set({rPdfPct:5+Math.round((i/pdf.numPages)*90)});
+    }
+    txt=txt.replace(/[ \t]+/g,' ').replace(/\n{3,}/g,'\n\n').trim();
+    const ts=loadTexts();ts[deckId]=txt;saveTexts(ts);
+    set({rPdfLoading:false,rPdfPct:0});
+  }catch(e){
+    console.error(e);set({rPdfLoading:false,rPdfPct:0});
+    alert('Erreur lecture PDF : '+e.message);
+  }
+}
+
+function renderAnnTxt(deckId,rawText,annos){
+  const sorted=[...annos].filter(a=>a.start!==undefined).sort((a,b)=>a.start-b.start);
+  if(!sorted.length)return h(rawText).replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>');
+  let res='',pos=0;
+  for(const a of sorted){
+    if(a.start<pos)continue;
+    res+=h(rawText.slice(pos,a.start));
+    const sn=rawText.slice(a.start,a.end);
+    const cls=a.type==='ul'?'ann-ul':a.type==='imp'?'ann-imp':a.type==='note'?'hy':a.type;
+    res+=`<span class="${cls}" data-aid="${a.id}" ${a.note?`title="${h(a.note)}"`:''} onclick="clickAnn('${a.id}')">${h(sn)}</span>`;
+    pos=a.end;
+  }
+  res+=h(rawText.slice(pos));
+  return res.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>');
+}
+
+function handleSel(e){
+  const sel=window.getSelection?.();
+  if(!sel||sel.isCollapsed||!sel.toString().trim()){
+    if(!S.rSelMenu)return;
+    if(e.target.closest('.sel-menu'))return;
+    set({rSelMenu:null});return;
+  }
+  const txt=sel.toString().trim();
+  const range=sel.getRangeAt(0);
+  const rect=range.getBoundingClientRect();
+  const x=Math.min(rect.left,window.innerWidth-240);
+  const y=Math.max(rect.top-52,60);
+  const container=document.getElementById('reader-txt');
+  if(!container)return;
+  const pr=document.createRange();
+  pr.setStart(container,0);pr.setEnd(range.startContainer,range.startOffset);
+  const start=pr.toString().length;
+  S._rSel={text:txt,start,end:start+txt.length};
+  set({rSelMenu:{x,y}});
+}
+
+function rSelMenu(){
+  const{rSelMenu}=S;
+  return`<div class="sel-menu" style="left:${rSelMenu.x}px;top:${rSelMenu.y}px">
+    <button class="sel-btn" style="color:#f9d71c" onclick="applyAnn('hy')">🟡</button>
+    <button class="sel-btn" style="color:#4ade80" onclick="applyAnn('hg')">🟢</button>
+    <button class="sel-btn" style="color:#f48fb1" onclick="applyAnn('hp')">🩷</button>
+    <button class="sel-btn" style="text-decoration:underline" onclick="applyAnn('ul')">U͟</button>
+    <button class="sel-btn" onclick="applyAnn('imp')">⭐</button>
+    <button class="sel-btn" onclick="applyAnn('note')">📝</button>
+    <button class="sel-btn" style="color:#aaa" onclick="set({rSelMenu:null})">✕</button>
+  </div>`;
+}
+
+function applyAnn(type){
+  const sel=S._rSel;
+  if(!sel){set({rSelMenu:null});return;}
+  const ann={id:'a'+Date.now(),type,start:sel.start,end:sel.end,text:sel.text,note:'',createdAt:Date.now()};
+  const all={...S.rAnnotations};
+  all[S.rCourseId]=[...(all[S.rCourseId]||[]),ann];
+  S.rAnnotations=all;saveAnnotations(all);
+  S._rSel=null;
+  if(window.getSelection)window.getSelection().removeAllRanges();
+  if(type==='note')set({rSelMenu:null,rAnnoPanel:true,rEditNoteId:ann.id});
+  else set({rSelMenu:null});
+}
+
+function clickAnn(id){set({rAnnoPanel:true,rEditNoteId:id});}
+
+function rAnnoPanel(){
+  const annos=(S.rAnnotations[S.rCourseId]||[]).slice().reverse();
+  const TL={'hy':'🟡 Jaune','hg':'🟢 Vert','hp':'🩷 Rose','ul':'U͟ Souligné','imp':'⭐ Important','note':'📝 Note'};
+  const TC={'hy':'#7a6200','hg':'var(--g)','hp':'#880e4f','ul':'#1a1a1a','imp':'#e65100','note':'var(--b)'};
+  const TB={'hy':'#fff9c4','hg':'var(--g-bg)','hp':'#fce4ec','ul':'#f0f0ec','imp':'#fff3e0','note':'var(--b-bg)'};
+  return`
+    <div style="position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:399" onclick="set({rAnnoPanel:false,rEditNoteId:null})"></div>
+    <div class="ann-panel">
+      <div style="width:38px;height:4px;background:#e0e0dc;border-radius:2px;margin:12px auto 0"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px 8px">
+        <div style="font-weight:700;font-size:16px">Annotations (${annos.length})</div>
+        <button class="btn btn-gh btn-sm" onclick="set({rAnnoPanel:false,rEditNoteId:null})">Fermer</button>
+      </div>
+      <div style="flex:1;overflow-y:auto;padding:0 16px 16px">
+        ${annos.length===0?`<div style="text-align:center;padding:32px;color:#bbb;font-size:14px">Aucune annotation.<br><span style="font-size:12px">Sélectionnez du texte pour annoter</span></div>`:
+          annos.map(a=>`
+            <div class="ann-item">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+                <span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;color:${TC[a.type]||'#555'};background:${TB[a.type]||'#f0f0ec'}">${TL[a.type]||a.type}</span>
+                <button onclick="delAnn('${a.id}')" style="margin-left:auto;background:transparent;border:none;cursor:pointer;color:#ccc;font-size:16px;padding:0">✕</button>
+              </div>
+              <div style="font-size:14px;line-height:1.45;padding:6px 8px;border-radius:6px;background:${TB[a.type]||'#f0f0ec'};margin-bottom:6px">"${h(a.text)}"</div>
+              ${S.rEditNoteId===a.id?`
+                <textarea id="note-inp" class="note-input" rows="3" placeholder="Votre note…" oninput="S.rEditNoteId&&(S._noteTmp=this.value)" style="border:1.5px solid var(--bd);border-radius:8px;padding:8px 10px;font-size:14px;width:100%;outline:none;resize:none">${h(a.note||'')}</textarea>
+                <div style="display:flex;gap:8px;margin-top:6px">
+                  <button class="btn btn-d btn-sm" onclick="saveNote('${a.id}')">Enregistrer</button>
+                  <button class="btn btn-gh btn-sm" onclick="set({rEditNoteId:null})">Annuler</button>
+                </div>
+              `:`
+                ${a.note?`<div style="font-size:13px;color:#555;font-style:italic;padding:4px 8px;background:#f7f7f3;border-radius:6px;margin-bottom:6px">💬 ${h(a.note)}</div>`:''}
+                <button class="btn btn-gh btn-sm" onclick="set({rEditNoteId:'${a.id}',rAnnoPanel:true})">${a.note?'✏️ Modifier':'+ Ajouter une note'}</button>
+              `}
+            </div>`).join('')
+        }
+      </div>
+    </div>`;
+}
+function delAnn(id){
+  const all={...S.rAnnotations};
+  all[S.rCourseId]=(all[S.rCourseId]||[]).filter(a=>a.id!==id);
+  S.rAnnotations=all;saveAnnotations(all);
+  set({rEditNoteId:S.rEditNoteId===id?null:S.rEditNoteId});
+}
+function saveNote(id){
+  const txt=(document.getElementById('note-inp')?.value||S._noteTmp||'').trim();
+  const all={...S.rAnnotations};
+  all[S.rCourseId]=(all[S.rCourseId]||[]).map(a=>a.id===id?{...a,note:txt}:a);
+  S.rAnnotations=all;saveAnnotations(all);
+  set({rEditNoteId:null,_noteTmp:''});
+}
+
+// ════════════════════════════════════════════════════════════════════
+// TUTEUR IA
+// ════════════════════════════════════════════════════════════════════
+function openTuteur(mode){
+  requireKey(()=>{
+    const texts=loadTexts();
+    const full=texts[S.rCourseId]||'';
+    const passage=mode==='sel'&&S._rSel?.text?S._rSel.text:full.slice(0,3500);
+    if(!passage.trim()){alert('Aucun texte disponible. Chargez d\'abord le PDF du cours.');return;}
+    set({tuteur:{deckId:S.rCourseId,passage,state:'menu',loading:false,exercises:[],currentEx:0,sel:null,fillVal:'',fillChecked:false,fillOk:false,openInput:'',openResult:null,chatHistory:[],summaryText:''},rSelMenu:null});
+  });
+}
+function closeTuteur(){set({tuteur:null});}
+
+async function tutAction(action){
+  const t=S.tuteur;
+  set(s=>({tuteur:{...s.tuteur,state:'loading',loading:true}}));
+  try{
+    if(action==='qcm'){
+      const d=parseJ(await claude(
+        `Tuteur naturopathie. Génère 3 QCM sur le passage. JSON VALIDE UNIQUEMENT.\nFormat: {"questions":[{"q":"...","options":["A","B","C","D"],"answer":0,"explanation":"..."}]}`,
+        `Passage:\n${t.passage}\n\nGénère 3 QCM précis sur ce passage.`
+      ));
+      set(s=>({tuteur:{...s.tuteur,state:'qcm',exercises:d?.questions||[],currentEx:0,sel:null,loading:false}}));
+    }else if(action==='fill'){
+      const d=parseJ(await claude(
+        `Tuteur naturopathie. Génère 3 textes à trous sur le passage. JSON VALIDE UNIQUEMENT.\nFormat: {"questions":[{"sentence":"...___BLANK___...","answer":"mot","hint":"..."}]}\nRègle: UN seul mot manquant.`,
+        `Passage:\n${t.passage}\n\nGénère 3 textes à trous.`
+      ));
+      set(s=>({tuteur:{...s.tuteur,state:'fill',exercises:d?.questions||[],currentEx:0,fillVal:'',fillChecked:false,fillOk:false,loading:false}}));
+    }else if(action==='open'){
+      const d=parseJ(await claude(
+        `Tuteur naturopathie. Génère 2 questions ouvertes stimulantes sur le passage. JSON VALIDE UNIQUEMENT.\nFormat: {"questions":[{"q":"..."}]}`,
+        `Passage:\n${t.passage}\n\nGénère 2 questions ouvertes.`
+      ));
+      set(s=>({tuteur:{...s.tuteur,state:'open',exercises:d?.questions||[],currentEx:0,openInput:'',openResult:null,loading:false}}));
+    }else if(action==='summary'){
+      const txt=await claude(
+        `Tuteur expert naturopathie. Fais un résumé structuré et pédagogique. Bullet points. Points clés, chiffres, contre-indications en valeur. 150-200 mots.`,
+        `Passage:\n${t.passage}\n\nRésume.`
+      );
+      set(s=>({tuteur:{...s.tuteur,state:'summary',summaryText:txt,loading:false}}));
+    }else if(action==='chat'){
+      set(s=>({tuteur:{...s.tuteur,state:'chat',chatHistory:[{role:'assistant',content:'Bonjour ! Je suis votre tuteur pour ce passage. Quel concept souhaitez-vous approfondir ?'}],loading:false}}));
+    }
+  }catch(e){
+    if(e.message==='NO_KEY'){set(s=>({tuteur:{...s.tuteur,state:'menu',loading:false}}));promptApiKey();return;}
+    set(s=>({tuteur:{...s.tuteur,state:'menu',loading:false}}));
+    alert('Erreur IA : '+e.message);
+  }
+}
+
+function tutPickQcm(i){if(S.tuteur.sel!==null)return;set(s=>({tuteur:{...s.tuteur,sel:i}}));}
+
+function tutCheckFill(){
+  const t=S.tuteur;
+  if(t.fillChecked)return;
+  const inp=document.getElementById('tfi');
+  const val=inp?inp.value:t.fillVal;
+  const ok=val.trim().toLowerCase()===(t.exercises[t.currentEx]?.answer||'').trim().toLowerCase();
+  set(s=>({tuteur:{...s.tuteur,fillVal:val,fillChecked:true,fillOk:ok}}));
+}
+
+async function tutEvalOpen(){
+  const t=S.tuteur;
+  const inp=document.getElementById('toi');
+  const val=inp?inp.value.trim():t.openInput;
+  if(!val)return;
+  const ex=t.exercises[t.currentEx];
+  set(s=>({tuteur:{...s.tuteur,openInput:val,loading:true}}));
+  try{
+    const res=await claude(
+      `Tuteur naturopathie bienveillant. Évalue la réponse étudiant. Structure: ✅ Ce qui est juste | 💡 Ce qui manque | 📚 Complément. 100-150 mots.`,
+      `Passage:\n${t.passage}\n\nQuestion: ${ex.q}\n\nRéponse étudiant: ${val}\n\nÉvalue.`
+    );
+    set(s=>({tuteur:{...s.tuteur,openResult:res,loading:false}}));
+  }catch(e){
+    set(s=>({tuteur:{...s.tuteur,loading:false}}));
+    alert('Erreur : '+e.message);
+  }
+}
+
+async function tutSendChat(){
+  const t=S.tuteur;
+  const inp=document.getElementById('tci');
+  const msg=inp?inp.value.trim():'';
+  if(!msg||t.loading)return;
+  const hist=[...t.chatHistory,{role:'user',content:msg}];
+  set(s=>({tuteur:{...s.tuteur,chatHistory:hist,loading:true}}));
+  if(inp)inp.value='';
+  try{
+    const k=getKey();
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,
+        system:`Tuteur expert naturopathie. Passage étudié:\n${t.passage}\n\nRéponds pédagogiquement, concis, bienveillant. Max 120 mots par réponse.`,
+        messages:hist.map(m=>({role:m.role,content:m.content}))
+      })
+    });
+    const d=await r.json();
+    const reply=d.content.filter(b=>b.type==='text').map(b=>b.text).join('');
+    set(s=>({tuteur:{...s.tuteur,chatHistory:[...hist,{role:'assistant',content:reply}],loading:false}}));
+    setTimeout(()=>document.getElementById('tce')?.scrollIntoView({behavior:'smooth'}),100);
+  }catch(e){set(s=>({tuteur:{...s.tuteur,loading:false}}));}
+}
+
+function rTuteur(){
+  const t=S.tuteur;
+  const deck=S.data.decks.find(d=>d.id===t.deckId);
+  return`
+    <div class="tut-ovl" onclick="if(event.target.classList.contains('tut-ovl'))closeTuteur()">
+      <div class="tut-sht">
+        <div class="tut-hdr">
+          <div style="font-weight:700;font-size:16px;flex:1">🤖 Tuteur IA</div>
+          <div style="font-size:12px;color:#aaa;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${h(deck?.name||'')}</div>
+          ${t.state!=='menu'&&t.state!=='loading'?`<button class="btn btn-gh btn-sm" onclick="set(s=>({tuteur:{...s.tuteur,state:'menu'}}))">← Menu</button>`:''}
+          <button class="btn btn-gh btn-sm" onclick="closeTuteur()">✕</button>
+        </div>
+        ${t.state==='loading'?`<div class="tut-body" style="text-align:center;padding:48px"><div class="spin"></div><div style="margin-top:14px;color:#888;font-size:14px">Génération en cours…</div></div>`
+        :t.state==='menu'?rTutMenu(t)
+        :t.state==='qcm'?rTutQcm(t)
+        :t.state==='fill'?rTutFill(t)
+        :t.state==='open'?rTutOpen(t)
+        :t.state==='summary'?rTutSummary(t)
+        :t.state==='chat'?'':''}
+        ${t.state==='chat'?rTutChat(t):''}
+      </div>
+    </div>`;
+}
+
+function rTutMenu(t){
+  const prev=t.passage.slice(0,100).replace(/\n/g,' ')+(t.passage.length>100?'…':'');
+  return`<div class="tut-body">
+    <div class="tut-passage">"${h(prev)}"</div>
+    <div class="tut-menu">
+      <div class="tut-m-btn" onclick="tutAction('qcm')"><div style="font-size:24px;margin-bottom:5px">✅</div><div style="font-weight:700;font-size:13px">QCM</div><div style="font-size:11px;color:#aaa">3 questions</div></div>
+      <div class="tut-m-btn" onclick="tutAction('fill')"><div style="font-size:24px;margin-bottom:5px">✍️</div><div style="font-weight:700;font-size:13px">Textes à trous</div><div style="font-size:11px;color:#aaa">3 exercices</div></div>
+      <div class="tut-m-btn" onclick="tutAction('open')"><div style="font-size:24px;margin-bottom:5px">💬</div><div style="font-weight:700;font-size:13px">Questions ouvertes</div><div style="font-size:11px;color:#aaa">IA évalue ta réponse</div></div>
+      <div class="tut-m-btn" onclick="tutAction('summary')"><div style="font-size:24px;margin-bottom:5px">📋</div><div style="font-weight:700;font-size:13px">Résumé</div><div style="font-size:11px;color:#aaa">Points clés</div></div>
+      <div class="tut-m-btn full" onclick="tutAction('chat')"><div style="font-size:24px;margin-bottom:5px">🧠</div><div style="font-weight:700;font-size:13px">Expliquer un concept</div><div style="font-size:11px;color:#aaa">Chat avec le tuteur</div></div>
+    </div>
+    <button class="btn btn-gh btn-sm btn-bl" style="margin-top:8px" onclick="set({showApiKey:true})">${getKey()?'🔑 Clé API configurée ✓':'🔑 Configurer la clé API'}</button>
+  </div>`;
+}
+
+function rTutQcm(t){
+  const ex=t.exercises[t.currentEx||0];
+  if(!ex)return`<div class="tut-body"><div style="text-align:center;padding:32px;color:#aaa">Aucun exercice</div></div>`;
+  const{sel}=t;
+  return`<div class="tut-body">
+    <div style="font-size:12px;color:#aaa;margin-bottom:10px;font-family:var(--mono)">${(t.currentEx||0)+1} / ${t.exercises.length}</div>
+    <div class="tut-q">${h(ex.q)}</div>
+    ${ex.options.map((o,i)=>`<button class="qopt ${sel!==null?i===ex.answer?'ok':i===sel?'ko':'dim':''}" onclick="tutPickQcm(${i})">
+      <span style="font-family:var(--mono);font-weight:700;font-size:12px;margin-right:6px">${'ABCD'[i]}</span>${h(o)}
+    </button>`).join('')}
+    ${sel!==null?`
+      <div class="alert ${sel===ex.answer?'al-g':'al-r'}" style="margin-top:10px">${sel===ex.answer?'✓ Correct !':'✗ Incorrect'} ${ex.explanation?'— '+h(ex.explanation):''}</div>
+      ${(t.currentEx||0)+1<t.exercises.length
+        ?`<button class="btn btn-d btn-bl" style="margin-top:10px" onclick="set(s=>({tuteur:{...s.tuteur,currentEx:(s.tuteur.currentEx||0)+1,sel:null}}))">Question suivante →</button>`
+        :`<button class="btn btn-d btn-bl" style="margin-top:10px" onclick="set(s=>({tuteur:{...s.tuteur,state:'menu'}}))">✓ Terminé</button>`
+      }`:''}
+  </div>`;
+}
+
+function rTutFill(t){
+  const ex=t.exercises[t.currentEx||0];
+  if(!ex)return`<div class="tut-body"><div style="text-align:center;padding:32px;color:#aaa">Aucun exercice</div></div>`;
+  const{fillChecked,fillOk}=t;
+  const parts=(ex.sentence||'').split('___BLANK___');
+  return`<div class="tut-body">
+    <div style="font-size:12px;color:#aaa;margin-bottom:10px;font-family:var(--mono)">${(t.currentEx||0)+1} / ${t.exercises.length}</div>
+    <div style="background:#fff;border:1px solid var(--bd);border-radius:14px;padding:18px;font-size:16px;font-weight:600;line-height:2.5;margin-bottom:14px">
+      ${h(parts[0])}
+      <input id="tfi" placeholder="?" ${fillChecked?'disabled':''}
+        oninput="S.tuteur.fillVal=this.value" onkeyup="S.tuteur.fillVal=this.value"
+        onkeydown="if(event.key==='Enter'){S.tuteur.fillVal=this.value;tutCheckFill()}"
+        autocorrect="off" autocapitalize="none" spellcheck="false"
+        style="border:none;border-bottom:2px solid #1a1a1a;background:transparent;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:700;width:140px;outline:none;text-align:center;${fillChecked?(fillOk?'color:var(--g);border-color:var(--g)':'color:var(--r);border-color:var(--r)'):''}">
+      ${h(parts[1]||'')}
+    </div>
+    ${ex.hint&&!fillChecked?`<div style="font-size:12px;color:#aaa;margin-bottom:10px">💡 ${h(ex.hint)}</div>`:''}
+    ${fillChecked?`
+      <div class="alert ${fillOk?'al-g':'al-r'}">${fillOk?'✓ Correct !':'✗ Réponse : <strong>'+h(ex.answer)+'</strong>'}</div>
+      ${(t.currentEx||0)+1<t.exercises.length
+        ?`<button class="btn btn-d btn-bl" style="margin-top:10px" onclick="set(s=>({tuteur:{...s.tuteur,currentEx:(s.tuteur.currentEx||0)+1,fillVal:'',fillChecked:false,fillOk:false}}))">Suivant →</button>`
+        :`<button class="btn btn-d btn-bl" style="margin-top:10px" onclick="set(s=>({tuteur:{...s.tuteur,state:'menu'}}))">✓ Terminé</button>`
+      }
+    `:`<button class="btn btn-d btn-bl" onclick="tutCheckFill()">Vérifier →</button>`}
+  </div>`;
+}
+
+function rTutOpen(t){
+  const ex=t.exercises[t.currentEx||0];
+  if(!ex)return`<div class="tut-body"><div style="text-align:center;padding:32px;color:#aaa">Aucune question</div></div>`;
+  return`<div class="tut-body">
+    <div style="font-size:12px;color:#aaa;margin-bottom:10px;font-family:var(--mono)">${(t.currentEx||0)+1} / ${t.exercises.length}</div>
+    <div class="tut-q">${h(ex.q)}</div>
+    ${t.openResult?`
+      <div class="tut-eval">${t.openResult.replace(/\n/g,'<br>')}</div>
+      ${(t.currentEx||0)+1<t.exercises.length
+        ?`<button class="btn btn-d btn-bl" style="margin-top:12px" onclick="set(s=>({tuteur:{...s.tuteur,currentEx:(s.tuteur.currentEx||0)+1,openInput:'',openResult:null}}))">Question suivante →</button>`
+        :`<button class="btn btn-d btn-bl" style="margin-top:12px" onclick="set(s=>({tuteur:{...s.tuteur,state:'menu'}}))">✓ Terminé</button>`
+      }
+    `:`
+      <textarea id="toi" rows="4" placeholder="Votre réponse…" oninput="S.tuteur.openInput=this.value">${h(t.openInput||'')}</textarea>
+      <button class="btn btn-d btn-bl" style="margin-top:10px" onclick="tutEvalOpen()" ${t.loading?'disabled':''}>${t.loading?'⏳ Évaluation…':'🤖 Faire évaluer'}</button>
+    `}
+  </div>`;
+}
+
+function rTutSummary(t){
+  return`<div class="tut-body">
+    <div style="font-weight:700;font-size:15px;margin-bottom:12px">📋 Résumé du passage</div>
+    <div style="background:#fff;border:1px solid var(--bd);border-radius:12px;padding:16px;font-size:14px;line-height:1.75">${(t.summaryText||'').replace(/\n/g,'<br>')}</div>
+    <button class="btn btn-d btn-bl" style="margin-top:14px" onclick="set(s=>({tuteur:{...s.tuteur,state:'menu'}}))">← Retour au menu</button>
+  </div>`;
+}
+
+function rTutChat(t){
+  return`
+    <div class="chat-wrap">
+      ${t.chatHistory.map(m=>`<div class="chat-bub ${m.role==='user'?'chat-usr':'chat-ai'}">${h(m.content).replace(/\n/g,'<br>')}</div>`).join('')}
+      ${t.loading?`<div class="chat-bub chat-ai" style="color:#aaa">⏳ En train de répondre…</div>`:''}
+      <div id="tce"></div>
+    </div>
+    <div class="chat-inp-row">
+      <input id="tci" class="chat-inp" placeholder="Posez votre question…" onkeydown="if(event.key==='Enter')tutSendChat()" autocorrect="off" spellcheck="false">
+      <button class="btn btn-d" onclick="tutSendChat()" ${t.loading?'disabled':''}>↑</button>
+    </div>`;
+}
+
+// ════════════════════════════════════════════════════════════════════
+// PLAY
+// ════════════════════════════════════════════════════════════════════
+function rPlay(){
+  if(S.data.decks.length===0)return`<div class="empty"><div class="ei">📚</div><div class="et">Aucun cours</div><div class="es">Importez un cours depuis l'onglet Cours</div></div>`;
+  if(S.session)return rGame();
+  return rPlaySetup();
+}
+function rPlaySetup(){
+  const{mode,selDecks,data}=S;
+  const pool=data.cards.filter(c=>selDecks.has(c.deckId)&&c.type===mode);
+  const duePool=pool.filter(isDue);
+  return`<div class="fade">
+    <div class="pg-t" style="margin-bottom:4px">Réviser</div>
+    <div class="pg-s" style="margin-bottom:20px">Sélectionnez vos cours et un mode</div>
+    <div class="sl">Mode</div>
+    <div class="mode-grid" style="margin-bottom:20px">
+      ${[['flash','🃏','Flashcards'],['qcm','✅','QCM'],['fill','✍','À trous'],['match','🔗','Association']].map(([id,ic,lb])=>`
+        <div class="mode-card ${mode===id?'on':''}" onclick="set({mode:'${id}'})">
+          <div style="font-size:22px;margin-bottom:5px">${ic}</div>
+          <div style="font-size:13px;font-weight:700">${lb}</div>
+        </div>`).join('')}
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div class="sl" style="margin-bottom:0">Cours</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-gh btn-sm" onclick="set({selDecks:new Set(S.data.decks.map(d=>d.id))})">Tout</button>
+        <button class="btn btn-gh btn-sm" onclick="set({selDecks:new Set()})">Aucun</button>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      ${data.groups.map(g=>{
+        const gd=data.decks.filter(d=>d.groupId===g.id);
+        if(!gd.length)return'';
+        return`<div style="padding:8px 16px 4px;font-size:11px;font-weight:700;color:#bbb;text-transform:uppercase;letter-spacing:1.2px;background:#fafaf8;border-bottom:1px solid var(--bd2)">${h(g.name)}</div>
+        ${gd.map(deck=>{
+          const dc=data.cards.filter(c=>c.deckId===deck.id&&c.type===mode);
+          const due=dc.filter(isDue).length;
+          const ck=selDecks.has(deck.id);
+          return`<label class="ck-item">
+            <input type="checkbox" ${ck?'checked':''} onchange="toggleDeck('${deck.id}')" style="width:18px;height:18px;accent-color:#1a1a1a;flex-shrink:0">
+            <div style="flex:1"><div style="font-weight:600;font-size:14px">${h(deck.name)}</div>
+            <div style="font-size:12px;color:#aaa;margin-top:1px;font-family:var(--mono)">${dc.length} cartes "${mode}"</div></div>
+            ${due>0?`<span class="badge badge-r">${due}</span>`:dc.length>0?`<span class="badge badge-gr">À jour</span>`:''}
+          </label>`;
+        }).join('')}`;
+      }).join('')}
+    </div>
+    ${selDecks.size===0?`<div class="alert al-b">☝ Cochez au moins un cours</div>`
+      :pool.length===0?`<div class="alert al-o">Aucune carte "${mode}" dans ces cours</div>`
+      :duePool.length>0?`<div class="alert al-o">⏰ ${duePool.length} carte(s) à réviser maintenant</div>`
+      :`<div class="alert al-g">✓ Entraînement libre — ${pool.length} cartes</div>`}
+    <button class="btn btn-d btn-lg btn-bl" onclick="startSession()" ${pool.length===0||selDecks.size===0?'disabled':''}>
+      ${duePool.length>0?`Réviser les ${duePool.length} dues →`:`S'entraîner (${Math.min(pool.length,25)}) →`}
+    </button>
+  </div>`;
+}
+function toggleDeck(id){const s=new Set(S.selDecks);s.has(id)?s.delete(id):s.add(id);set({selDecks:s});}
+function startSession(){
+  const{mode,selDecks,data}=S;
+  const pool=data.cards.filter(c=>selDecks.has(c.deckId)&&c.type===mode);
+  const due=pool.filter(isDue);
+  const src=due.length?due:pool;
+  const cards=[...src].sort(()=>Math.random()-.5).slice(0,mode==='match'?40:25);
+  const mc=cards.filter(c=>c.type==='match').slice(0,8);
+  set({session:{cards,index:0,correct:0,total:cards.length,done:false,
+    flipped:false,sel:null,fval:'',fchecked:false,fok:false,
+    mt:[...mc].sort(()=>Math.random()-.5),md:[...mc].sort(()=>Math.random()-.5),
+    mm:[],mw:[],mst:null,msd:null}});
+}
+
+// ── Game ──────────────────────────────────────────────────────────────────────
+function rGame(){
+  const{session,mode}=S;
+  if(session.done)return rResults();
+  const card=session.cards[session.index];
+  return`<div class="fade">
+    <div class="g-bar">
+      <button class="btn btn-gh btn-sm" onclick="set({session:null})">← Quitter</button>
+      <div class="prog" style="flex:1"><div class="prog-f" style="width:${(session.index/session.total)*100}%"></div></div>
+      <span style="font-family:var(--mono);font-size:13px;color:#bbb">${session.index+1}/${session.total}</span>
+      <span style="font-family:var(--mono);font-size:13px;color:var(--g);margin-left:6px">✓ ${session.correct}</span>
+    </div>
+    ${mode==='flash'?rFlash(card):mode==='qcm'?rQcm(card):mode==='fill'?rFill(card):rMatch()}
+  </div>`;
+}
+
+function rFlash(card){
+  const{flipped}=S.session;
+  return`
+    <div class="fc-scene" onclick="set(s=>({session:{...s.session,flipped:!s.session.flipped}}))">
+      <div class="fc-in ${flipped?'flip':''}">
+        <div class="fc-face fc-fr"><div class="fc-lb">Terme</div><div class="fc-tx">${h(card.front)}</div>${!flipped?`<div style="font-size:12px;color:#ccc;margin-top:12px">Appuyer pour révéler</div>`:''}</div>
+        <div class="fc-face fc-bk"><div class="fc-lb">Définition</div><div class="fc-tx" style="font-size:15px">${h(card.back)}</div></div>
+      </div>
+    </div>
+    ${flipped?`<div class="sm2-row">
+      <button class="sm2 sm2-bad" onclick="nxt(false,'${card.id}',0)">😟<br>Oublié</button>
+      <button class="sm2 sm2-mid" onclick="nxt(true,'${card.id}',3)">🤔<br>Difficile</button>
+      <button class="sm2 sm2-ok" onclick="nxt(true,'${card.id}',5)">🎯<br>Facile</button>
+    </div>`:`<div style="text-align:center;color:#ccc;font-size:13px;margin-top:12px">Appuyez sur la carte</div>`}`;
+}
+
+function rQcm(card){
+  const{sel}=S.session;
+  return`
+    <div style="background:#fff;border:1px solid var(--bd);border-radius:14px;padding:20px;font-size:16px;font-weight:600;line-height:1.5;margin-bottom:14px">${h(card.question)}</div>
+    ${(card.options||[]).map((o,i)=>`<button class="qopt ${sel!==null?i===card.answer?'ok':i===sel?'ko':'dim':''}" onclick="pickQcm(${i})">
+      <span style="font-family:var(--mono);font-weight:700;font-size:12px;margin-right:6px">${'ABCD'[i]}</span>${h(o.replace(/^[A-D]\.\s*/,''))}
+    </button>`).join('')}
+    ${sel!==null?`
+      ${card.explanation?`<div class="alert al-b" style="margin-top:12px">${h(card.explanation)}</div>`:''}
+      <button class="btn btn-d btn-bl" style="margin-top:10px" onclick="nxt(${sel===card.answer},'${card.id}')">Suivant →</button>
+    `:''}`;
+}
+function pickQcm(i){
+  if(S.session.sel!==null)return;
+  set(s=>({session:{...s.session,sel:i}}));
+  S._qTimer=setTimeout(()=>nxt(i===S.session.cards[S.session.index].answer,S.session.cards[S.session.index].id),5000);
+}
+
+function rFill(card){
+  const{fchecked,fok,fval}=S.session;
+  const parts=(card.sentence||'').split('___BLANK___');
+  return`
+    <div class="fill-q">
+      ${h(parts[0])}
+      <input class="fill-blank ${fchecked?fok?'ok':'ko':''}" id="fbi" placeholder="?"
+        oninput="S.session.fval=this.value" onkeyup="S.session.fval=this.value"
+        onkeydown="if(event.key==='Enter'){S.session.fval=this.value;checkFill()}"
+        ${fchecked?'disabled':''} autocorrect="off" autocapitalize="none" spellcheck="false">
+      ${h(parts[1]||'')}
+    </div>
+    ${card.hint&&!fchecked?`<div style="font-size:12px;color:#aaa;margin-bottom:10px">💡 ${h(card.hint)}</div>`:''}
+    ${fchecked?`
+      <div class="alert ${fok?'al-g':'al-r'}">${fok?'✓ Correct !':'✗ Réponse : <strong>'+h(card.answer)+'</strong>'}</div>
+      <button class="btn btn-d btn-bl" style="margin-top:10px" onclick="nxt(${fok},'${card.id}')">Suivant →</button>
+    `:`<button class="btn btn-d btn-bl" onclick="checkFill()">Vérifier →</button>`}`;
+}
+function checkFill(){
+  if(S.session.fchecked)return;
+  const inp=document.getElementById('fbi');
+  const val=inp?inp.value:S.session.fval;
+  const ok=val.trim().toLowerCase()===(S.session.cards[S.session.index].answer||'').trim().toLowerCase();
+  S.session.fval=val;
+  set(s=>({session:{...s.session,fval:val,fchecked:true,fok:ok}}));
+  S._fTimer=setTimeout(()=>nxt(ok,S.session.cards[S.session.index].id),5000);
+}
+
+function rMatch(){
+  const{mt,md,mm,mw,mst,msd}=S.session;
+  const done=new Set(mm),wrong=new Set(mw);
+  const cls=(type,idx,id)=>`m-btn${done.has(id)?' done':wrong.has(`${type}${idx}`)?' err':(type==='t'&&mst===idx)||(type==='d'&&msd===idx)?' sel':''}`;
+  return`
+    <div class="alert al-b" style="margin-bottom:14px">🔗 Relie termes et définitions — ${mm.length}/${mt.length}</div>
+    <div class="match-grid">
+      <div class="match-col">${mt.map((t,i)=>`<button class="${cls('t',i,t.id)}" onclick="pickMatch('t',${i})" ${done.has(t.id)?'disabled':''}>${h(t.term)}</button>`).join('')}</div>
+      <div class="match-col">${md.map((d,i)=>`<button class="${cls('d',i,d.id)}" onclick="pickMatch('d',${i})" ${done.has(d.id)?'disabled':''}>${h(d.definition)}</button>`).join('')}</div>
+    </div>`;
+}
+function pickMatch(type,idx){
+  const{mst,msd,mt,md,mm,mw}=S.session;
+  if(mw.length)return;
+  let nT=mst,nD=msd;
+  if(type==='t')nT=idx;else nD=idx;
+  if(nT!==null&&nD!==null){
+    if(mt[nT].id===md[nD].id){
+      const nm=[...mm,mt[nT].id];
+      set(s=>({session:{...s.session,mm:nm,mst:null,msd:null}}));
+      if(nm.length===mt.length)setTimeout(()=>set(s=>({session:{...s.session,done:true,correct:nm.length,total:mt.length}})),600);
+    }else{
+      set(s=>({session:{...s.session,mw:[`t${nT}`,`d${nD}`],mst:null,msd:null}}));
+      setTimeout(()=>set(s=>({session:{...s.session,mw:[]}})),700);
+    }
+  }else set(s=>({session:{...s.session,mst:nT,msd:nD}}));
+}
+
+function nxt(correct,cardId,quality){
+  if(S._qTimer){clearTimeout(S._qTimer);S._qTimer=null;}
+  if(S._fTimer){clearTimeout(S._fTimer);S._fTimer=null;}
+  const card=S.data.cards.find(c=>c.id===cardId);
+  if(card){
+    const upd=sm2(card,quality??(correct?5:0));
+    S.data={...S.data,cards:S.data.cards.map(c=>c.id===cardId?{...c,...upd}:c)};
+    saveData(S.data);
+  }
+  const s=S.session;
+  const i=s.index+1,c=correct?s.correct+1:s.correct;
+  if(i>=s.total)set({session:{...s,index:i,correct:c,done:true}});
+  else set({session:{...s,index:i,correct:c,flipped:false,sel:null,fval:'',fchecked:false,fok:false}});
+}
+
+function rResults(){
+  const{session}=S;
+  const pct=session.total>0?Math.round((session.correct/session.total)*100):0;
+  return`<div class="res-card fade">
+    <div style="font-size:38px;margin-bottom:10px">${pct>=80?'🏆':pct>=50?'💪':'📖'}</div>
+    <div style="font-size:62px;font-weight:700;font-family:var(--mono);line-height:1">${pct}%</div>
+    <div style="color:#bbb;font-size:13px;margin:8px 0 22px">Score de session</div>
+    <div style="display:flex;justify-content:center;gap:28px;margin-bottom:22px">
+      <div style="text-align:center"><div style="font-size:26px;font-weight:700;font-family:var(--mono);color:var(--g)">${session.correct}</div><div style="font-size:10px;color:#bbb;margin-top:2px">CORRECTS</div></div>
+      <div style="text-align:center"><div style="font-size:26px;font-weight:700;font-family:var(--mono);color:var(--r)">${session.total-session.correct}</div><div style="font-size:10px;color:#bbb;margin-top:2px">INCORRECTS</div></div>
+      <div style="text-align:center"><div style="font-size:26px;font-weight:700;font-family:var(--mono)">${session.total}</div><div style="font-size:10px;color:#bbb;margin-top:2px">TOTAL</div></div>
+    </div>
+    <div style="color:#bbb;font-size:13px;margin-bottom:22px">${pct>=80?'Excellent !':pct>=50?'Bien joué, continuez.':'La répétition espacée vous aidera.'}</div>
+    <button class="btn btn-d btn-lg btn-bl" onclick="set({session:null})">Nouvelle session →</button>
+  </div>`;
+}
+
+// ════════════════════════════════════════════════════════════════════
+// STATS
+// ════════════════════════════════════════════════════════════════════
+function rStats(){
+  const{data}=S;
+  const total=data.cards.length;
+  const due=data.cards.filter(isDue).length;
+  const mastered=data.cards.filter(c=>(c.repetitions||0)>=3&&!isDue(c)).length;
+  return`<div class="fade">
+    <div class="pg-t" style="margin-bottom:4px">Statistiques</div>
+    <div class="pg-s" style="margin-bottom:20px">${data.groups.length} groupe(s) · ${data.decks.length} cours · ${total} cartes</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px">
+      <div class="card" style="padding:16px 10px;text-align:center"><div style="font-size:28px;font-weight:700;font-family:var(--mono)">${total}</div><div style="font-size:10px;color:#bbb;margin-top:3px;text-transform:uppercase;letter-spacing:.5px">Cartes</div></div>
+      <div class="card" style="padding:16px 10px;text-align:center"><div style="font-size:28px;font-weight:700;font-family:var(--mono);color:var(--r)">${due}</div><div style="font-size:10px;color:#bbb;margin-top:3px;text-transform:uppercase;letter-spacing:.5px">À réviser</div></div>
+      <div class="card" style="padding:16px 10px;text-align:center"><div style="font-size:28px;font-weight:700;font-family:var(--mono);color:var(--g)">${mastered}</div><div style="font-size:10px;color:#bbb;margin-top:3px;text-transform:uppercase;letter-spacing:.5px">Maîtrisées</div></div>
+    </div>
+    <div class="sl" style="margin-bottom:10px">Par type</div>
+    <div class="card" style="padding:14px 16px;display:flex;gap:18px;flex-wrap:wrap;margin-bottom:22px">
+      ${[['flash','🃏','Flash'],['qcm','✅','QCM'],['fill','✍','Trous'],['match','🔗','Assoc.']].map(([t,ic,lb])=>`
+        <div style="display:flex;align-items:center;gap:6px">
+          <span>${ic}</span><span style="font-family:var(--mono);font-weight:700;font-size:15px">${data.cards.filter(c=>c.type===t).length}</span>
+          <span style="font-size:12px;color:#aaa">${lb}</span>
+        </div>`).join('')}
+    </div>
+    <div class="sl" style="margin-bottom:10px">Progression par cours</div>
+    ${data.decks.length===0?`<div class="empty"><div class="ei">📊</div><div class="es">Aucun cours</div></div>`:`
+      <div class="card">
+        ${data.groups.map(g=>{
+          const gd=data.decks.filter(d=>d.groupId===g.id);
+          if(!gd.length)return'';
+          return`<div style="padding:8px 16px 4px;font-size:11px;font-weight:700;color:#bbb;text-transform:uppercase;letter-spacing:1.2px;background:#fafaf8;border-bottom:1px solid var(--bd2)">${h(g.name)}</div>
+          ${gd.map(deck=>{
+            const dc=data.cards.filter(c=>c.deckId===deck.id);
+            const d=dc.filter(isDue).length;
+            const m=dc.filter(c=>(c.repetitions||0)>=3&&!isDue(c)).length;
+            const ip=dc.filter(c=>(c.repetitions||0)>0&&(c.repetitions||0)<3).length;
+            const p=dc.length>0?Math.round((m/dc.length)*100):0;
+            return`<div style="padding:14px 16px;border-bottom:1px solid var(--bd2)">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+                <div style="font-weight:600;font-size:14px;flex:1">${h(deck.name)}</div>
+                ${d>0?`<span class="badge badge-r">${d} dues</span>`:`<span class="badge badge-gr">À jour</span>`}
+                <span style="font-family:var(--mono);font-size:13px;font-weight:700">${p}%</span>
+              </div>
+              <div class="prog" style="margin-bottom:5px"><div class="prog-f" style="width:${p}%"></div></div>
+              <div style="font-size:12px;color:#bbb">${m}/${dc.length} maîtrisées · ${ip} en cours</div>
+            </div>`;
+          }).join('')}`;
+        }).join('')}
+      </div>
+    `}
+  </div>`;
+}
+
+// ── Boot ──────────────────────────────────────────────────────────────────────
+R();
+</script>
+</body>
+</html>
